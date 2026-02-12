@@ -12,6 +12,9 @@ import os
 from pathlib import Path
 import queue
 
+# 版本常量
+__version__ = "1.0.0"
+
 try:
     import pikepdf
 except ImportError:
