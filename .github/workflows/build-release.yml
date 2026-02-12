@@ -1,0 +1,43 @@
+name: Build and Upload PDFUnlocker EXE
+
+on:
+  release:
+    types: [published]  # 仅在发布新 Release 时触发
+
+jobs:
+  build:
+    runs-on: windows-latest  # 必须用 Windows 才能生成 .exe
+
+    steps:
+      # 1. 检出代码
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. 设置 Python 环境
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # 3. 安装依赖
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pikepdf pyinstaller
+
+      # 4. 打包 EXE（假设主程序是 pdf_unlocker_gui.py）
+      - name: Build EXE with PyInstaller
+        run: |
+          pyinstaller --onefile --windowed --name PDFUnlocker pdf_unlocker_gui.py
+          # 如果你有图标，取消注释下一行并确保 icon.ico 存在
+          # pyinstaller --onefile --windowed --icon=icon.ico --name PDFUnlocker pdf_unlocker_gui.py
+
+      # 5. 上传生成的 EXE 到 Release
+      - name: Upload EXE to Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./dist/PDFUnlocker.exe
+          asset_name: PDFUnlocker.exe
+          tag: ${{ github.event.release.tag_name }}
+          overwrite: true
