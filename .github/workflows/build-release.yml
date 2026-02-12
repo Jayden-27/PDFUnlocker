@@ -8,6 +8,9 @@ jobs:
   build:
     runs-on: windows-latest  # 必须用 Windows 才能生成 .exe
 
+    permissions:
+      contents: write
+      
     steps:
       # 1. 检出代码
       - name: Checkout code
