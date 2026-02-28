@@ -9,6 +9,7 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import threading
 import os
+import sys
 from pathlib import Path
 import queue
 
@@ -437,8 +438,17 @@ class PDFUnlockerGUI:
             self.root.after(100, self.check_progress)
 
 
+def _resource_path(relative_path: str) -> str:
+    """获取资源文件路径（兼容 PyInstaller 打包后的临时目录）。"""
+    base = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base, relative_path)
+
+
 def main():
     root = tk.Tk()
+    icon_path = _resource_path("app.ico")
+    if os.path.exists(icon_path):
+        root.iconbitmap(icon_path)
     app = PDFUnlockerGUI(root)
     root.mainloop()
 
